@@ -1,0 +1,58 @@
+CREATE TABLE Equipment (
+	equipment_id 
+	name 
+	locked 
+	additional_info 
+	status 
+	times_booked 
+	times_cancelled 
+	category 
+);
+
+CREATE TABLE Boat (
+	equipment_id
+	steering
+	seats
+	average_crew_weight
+	boat_weight
+	last_rigged_as
+);
+
+CREATE TABLE Blade (
+	equipment_id
+	blade_type
+	blade_number
+);
+
+CREATE TABLE Boat_Blade (
+	boat_equipment_id, blade_equipment_id
+	boat_equipment_id
+	blade_equipment_id
+);
+
+CREATE TABLE Booking (
+	booking_id
+	start_date_time
+	end_date_time
+	user_id
+);
+
+CREATE TABLE Booking_Equipment (
+	booking_id, equipment_id
+);
+
+CREATE TABLE User (
+	user_id
+	name
+	username
+	password
+	access_level
+	foot_steer
+	tow
+);
+
+
+
+
+Add ON DELETE behaviours 
+Add indexing on specific columns 
