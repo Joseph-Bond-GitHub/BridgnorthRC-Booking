@@ -1,54 +1,66 @@
 CREATE TABLE Equipment (
-	equipment_id 
-	name 
-	locked 
-	additional_info 
-	status 
-	times_booked 
-	times_cancelled 
-	category 
+	PRIMARY KEY (equipment_id),
+	name, 
+	locked, 
+	additional_info, 
+	status, 
+	times_booked, 
+	times_cancelled, 
+	category, 
 );
 
 CREATE TABLE Boat (
-	equipment_id
-	steering
-	seats
-	average_crew_weight
-	boat_weight
-	last_rigged_as
+	PRIMARY KEY (equipment_id),
+	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
+		ON DELETE CASCADE,
+	steering,
+	seats,
+	average_crew_weight,
+	boat_weight,
+	last_rigged_as,
 );
 
 CREATE TABLE Blade (
-	equipment_id
-	blade_type
-	blade_number
+	PRIMARY KEY (equipment_id),
+	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
+		ON DELETE CASCADE, 
+	blade_type,
+	blade_number,
 );
 
 CREATE TABLE Boat_Blade (
-	boat_equipment_id, blade_equipment_id
-	boat_equipment_id
-	blade_equipment_id
+	PRIMARY KEY (boat_equipment_id, blade_equipment_id),
+	FOREIGN KEY (boat_equipment_id) REFERENCES Boat(equipment_id)
+		ON DELETE CASCADE,
+	FOREIGN KEY (blade_equipment_id) REFERENCES Blade(equipment_id)
+		ON DELETE CASCADE,
 );
 
 CREATE TABLE Booking (
-	booking_id
-	start_date_time
-	end_date_time
-	user_id
+	PRIMARY KEY (booking_id),
+	FOREIGN KEY (user_id) REFERENCES User(user_id) 
+		ON DELETE CASCADE,
+	start_date_time,
+	end_date_time,
+	user_id,
 );
 
 CREATE TABLE Booking_Equipment (
-	booking_id, equipment_id
-);
+	PRIMARY KEY (booking_id, equipment_id),
+	FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
+		ON DELETE CASCADE,
+	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
+		ON DELETE CASCADE,
 
 CREATE TABLE User (
-	user_id
-	name
-	username
-	password
-	access_level
-	foot_steer
-	tow
+	PRIMARY KEY (user_id),
+	name,
+	username,
+	password,
+	access_level,
+	foot_steer,
+	tow,
+	is_active BOOLEAN NOT NULL DEFAULT TRUE,
 );
 
 
