@@ -1,48 +1,67 @@
 CREATE TABLE Equipment (
+	equipment_id SMALLINT UNSIGNED UNIQUE AUTO_INCREMENT,
+	name VARCHAR(100) UNIQUE, 
+	locked BOOLEAN, 
+	additional_info VARCHAR(300), 
+	status ENUM('functional', 'under maintenance', 'retired'), 
+	times_booked SMALLINT UNSIGNED, 
+	times_cancelled SMALLINT UNSIGNED, 
+	category ENUM(boat, blade, gym), 
 	PRIMARY KEY (equipment_id),
-	name, 
-	locked, 
-	additional_info, 
-	status, 
-	times_booked, 
-	times_cancelled, 
-	category, 
 );
 
 CREATE TABLE Boat (
+	equipment_id SMALLINT UNSIGNED UNIQUE AUTO_INCREMENT,
+	steering ENUM(foot, hand, coxed),
+	seats TINYINT UNSIGNED CHECK (seats = 1 OR 2 OR 4 OR 5 OR 8),
+	average_crew_weight SMALLINT UNSIGNED,
+	boat_weight DECIMAL(5,2) UNSIGNED, 
+	last_rigged_as ENUM(sweep, scull),
 	PRIMARY KEY (equipment_id),
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
-		ON DELETE CASCADE,
-	steering,
-	seats,
-	average_crew_weight,
-	boat_weight,
-	last_rigged_as,
+		ON DELETE CASCADE
+	
 );
 
 CREATE TABLE Blade (
+	equipment_id SMALLINT AUTO_INCREMENT,
+	blade_type ENUM(sweep, scull),
+	blade_number TINYINT UNSIGNED CHECK (blade_number = 1 OR 2 OR 4 OR 5 OR 8),
 	PRIMARY KEY (equipment_id),
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
-		ON DELETE CASCADE, 
-	blade_type,
-	blade_number,
+		ON DELETE CASCADE
 );
 
 CREATE TABLE Boat_Blade (
+	boat_equipment_id UNSIGNED SMALLINT,
+	blade_equipment_id UNSIGNED SMALLINT,
 	PRIMARY KEY (boat_equipment_id, blade_equipment_id),
 	FOREIGN KEY (boat_equipment_id) REFERENCES Boat(equipment_id)
 		ON DELETE CASCADE,
 	FOREIGN KEY (blade_equipment_id) REFERENCES Blade(equipment_id)
-		ON DELETE CASCADE,
+		ON DELETE CASCADE
+);
+
+CREATE TABLE User (
+	user_id SMALLINT UNIQUE UNSIGNED,
+	name VARCHAR(100),
+	username VARCHAR(100) UNIQUE,
+	password VARCHAR(255),
+	access_level ENUM(user, admin, sysadmin),
+	foot_steer BOOLEAN NOT NULL DEFAULT FALSE,
+	tow BOOLEAN NOT NULL DEFAULT FALSE,
+	is_active BOOLEAN NOT NULL DEFAULT TRUE,
+	PRIMARY KEY (user_id)
 );
 
 CREATE TABLE Booking (
+	start_date_time DATETIME DEFUALT,
+	end_date_time DATETIME DEFAULT,
+	booking_id SMALLINT UNIQUE UNSIGNED AUTO_INCREMENT,
+	user_id SMALLINT UNSIGNED AUTO_INCREMENT,
 	PRIMARY KEY (booking_id),
 	FOREIGN KEY (user_id) REFERENCES User(user_id) 
-		ON DELETE CASCADE,
-	start_date_time,
-	end_date_time,
-	user_id,
+		ON DELETE CASCADE
 );
 
 CREATE TABLE Booking_Equipment (
@@ -50,21 +69,7 @@ CREATE TABLE Booking_Equipment (
 	FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
 		ON DELETE CASCADE,
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
-		ON DELETE CASCADE,
-
-CREATE TABLE User (
-	PRIMARY KEY (user_id),
-	name,
-	username,
-	password,
-	access_level,
-	foot_steer,
-	tow,
-	is_active BOOLEAN NOT NULL DEFAULT TRUE,
+		ON DELETE CASCADE
 );
 
 
-
-
-Add ON DELETE behaviours 
-Add indexing on specific columns 
