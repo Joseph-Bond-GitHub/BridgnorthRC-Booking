@@ -1,70 +1,85 @@
 CREATE TABLE Equipment (
+	equipment_id SMALLINT UNSIGNED UNIQUE AUTO_INCREMENT,
+	name VARCHAR(100) UNIQUE, 
+	locked BOOLEAN, 
+	additional_info VARCHAR(300), 
+	status ENUM('functional', 'under maintenance', 'retired'), 
+	times_booked SMALLINT UNSIGNED NOT NULL DEFAULT 0, 
+	times_cancelled SMALLINT UNSIGNED NOT NULL DEFAULT 0, 
+	category ENUM('boat', 'blade', 'gym'), 
 	PRIMARY KEY (equipment_id),
-	name, 
-	locked, 
-	additional_info, 
-	status, 
-	times_booked, 
-	times_cancelled, 
-	category, 
+	INDEX number_booked_out_indx (times_booked, times_cancelled),
+	INDEX which_equipment_indx (category)
 );
 
 CREATE TABLE Boat (
+	equipment_id SMALLINT UNSIGNED,
+	steering ENUM('foot', 'hand', 'coxed'),
+	seats TINYINT UNSIGNED CHECK (seats IN(1,2,4,5,8)),
+	average_crew_weight SMALLINT UNSIGNED,
+	boat_weight DECIMAL(5,2) UNSIGNED, 
+	last_rigged_as ENUM('sweep', 'scull'),
 	PRIMARY KEY (equipment_id),
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
 		ON DELETE CASCADE,
-	steering,
-	seats,
-	average_crew_weight,
-	boat_weight,
-	last_rigged_as,
+	INDEX number_seats_indx (seats)	
 );
 
 CREATE TABLE Blade (
+	equipment_id SMALLINT UNSIGNED,
+	blade_type ENUM('sweep', 'scull'),
+	blade_number TINYINT UNSIGNED CHECK (blade_number IN (1,2,4,5,8)),
 	PRIMARY KEY (equipment_id),
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
-		ON DELETE CASCADE, 
-	blade_type,
-	blade_number,
+		ON DELETE CASCADE,
+	INDEX numbers_blades_indx (blade_number)
 );
 
 CREATE TABLE Boat_Blade (
+	boat_equipment_id SMALLINT UNSIGNED,
+	blade_equipment_id SMALLINT UNSIGNED,
 	PRIMARY KEY (boat_equipment_id, blade_equipment_id),
 	FOREIGN KEY (boat_equipment_id) REFERENCES Boat(equipment_id)
 		ON DELETE CASCADE,
 	FOREIGN KEY (blade_equipment_id) REFERENCES Blade(equipment_id)
-		ON DELETE CASCADE,
+		ON DELETE CASCADE
+);
+
+CREATE TABLE User (
+	user_id SMALLINT UNIQUE UNSIGNED AUTO_INCREMENT,
+	name VARCHAR(100),
+	username VARCHAR(100) UNIQUE,
+	password VARCHAR(255),
+	access_level ENUM('user', 'admin', 'sysadmin'),
+	foot_steer BOOLEAN NOT NULL DEFAULT FALSE,
+	tow BOOLEAN NOT NULL DEFAULT FALSE,
+	is_active BOOLEAN NOT NULL DEFAULT TRUE,
+	PRIMARY KEY (user_id),
+	INDEX username_indx (username),
+	INDEX foot_steer_indx (foot_steer),
+	INDEX tow_indx (tow)
 );
 
 CREATE TABLE Booking (
+	start_date_time DATETIME,
+	end_date_time DATETIME CHECK (end_date_time > start_date_time),
+	booking_id SMALLINT UNIQUE UNSIGNED AUTO_INCREMENT,
+	user_id SMALLINT UNSIGNED,
 	PRIMARY KEY (booking_id),
 	FOREIGN KEY (user_id) REFERENCES User(user_id) 
 		ON DELETE CASCADE,
-	start_date_time,
-	end_date_time,
-	user_id,
+	INDEX booking_times_indx (start_date_time, end_date_time)
 );
 
 CREATE TABLE Booking_Equipment (
+	booking_id SMALLINT UNSIGNED,
+	equipment_id SMALLINT UNSIGNED,
 	PRIMARY KEY (booking_id, equipment_id),
 	FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
 		ON DELETE CASCADE,
 	FOREIGN KEY (equipment_id) REFERENCES Equipment(equipment_id)
 		ON DELETE CASCADE,
-
-CREATE TABLE User (
-	PRIMARY KEY (user_id),
-	name,
-	username,
-	password,
-	access_level,
-	foot_steer,
-	tow,
-	is_active BOOLEAN NOT NULL DEFAULT TRUE,
+	INDEX equipment_lookup_indx (equipment_id)
 );
 
 
-
-
-Add ON DELETE behaviours 
-Add indexing on specific columns 
