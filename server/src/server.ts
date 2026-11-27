@@ -1,3 +1,6 @@
+// To check the backend is working, http://localhost:5173 should show database time
+// If both front end and backend is functional, curl -X GET 'http://localhost:3000/api/health'
+// and curl -X GET 'http://localhost:5173/api/health' will return the database time
 import "dotenv/config"; // loads .env into process.env (must come first)
 import express from "express";
 import { pool } from "./db";
@@ -10,5 +13,5 @@ app.get("/api/health", async (_req, res) => {
   res.json({ dbTime: result.rows[0].db_time });
 });
 
-const port = Number(process.env.PORT) || 3000;
+const port = 3000;//Number(process.env.PORT) || 3000;
 app.listen(port, () => console.log(`API on http://localhost:${port}`));
