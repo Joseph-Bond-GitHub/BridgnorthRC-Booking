@@ -1,3 +1,4 @@
+// This file contains the actual UI code
 import { useEffect, useState } from "react";
 
 export default function App() {
